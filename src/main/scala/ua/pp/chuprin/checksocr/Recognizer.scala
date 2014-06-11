@@ -7,10 +7,10 @@ import scala.collection.mutable.ArrayBuffer
 trait Recognizer {
   def recognize(image : BufferedImage) : Check
 
-  class Check(val products : List[Any], val sum : Float) {
+  class Check(val products : List[Goods], val sum : Double) {
   }
 
-  class Product(val name : String, val price : Int) {
+  class Goods(val name : String, val price : Double) {
   }
 }
 
@@ -43,7 +43,7 @@ object Recognizer {
     }
 
     if(end > start) {
-      var heigth = 0
+      var height = 0
       val lines = ArrayBuffer[BufferedImage]()
       for(y <- 0 until image.getHeight) {
         var whiteCount : Int = 0
@@ -51,12 +51,12 @@ object Recognizer {
           if (isWhite(image.getRGB(x, y))) whiteCount += 1
         }
         if (whiteCount == image.getWidth) { // white line
-          if(heigth > 10) {
-            lines += image.getSubimage(start, y - heigth, end - start, heigth)
+          if(height > 10) {
+            lines += image.getSubimage(start, y - height, end - start + 1, height)
           }
-          heigth = 0
+          height = 0
         } else {
-          heigth += 1
+          height += 1
         }
       }
 
@@ -99,7 +99,9 @@ object Recognizer {
     while(x >= 0) {
       var whiteCount : Int = 0
       for (y <- 0 until image.getHeight) {
-        if (isWhite(image.getRGB(x, y))) whiteCount += 1
+        if (isWhite(image.getRGB(x, y))) {
+          whiteCount += 1
+        }
       }
       if (whiteCount < image.getHeight) { // black column
         return x
@@ -130,14 +132,15 @@ object Recognizer {
     val left = leftBound(image)
     val top = topBound(image)
 
-    if(left == image.getWidth || top == image.getHeight)
+    if(left == image.getWidth || top == image.getHeight) {
       image.getSubimage(0, 0, 1, 1)
-    else
+    } else {
       image.getSubimage(left, top, rightBound(image) - left + 1, bottomBound(image) - top + 1)
+    }
   }
 
   def gray(image: BufferedImage) = {
-    image.getRGB(0, 0, image.getWidth, image.getHeight, null, 0, AtbRecognizer.characterWidth).
+    image.getRGB(0, 0, image.getWidth, image.getHeight, null, 0, AtbRecognizer.CHARACTER_WIDTH).
       map(Recognizer.explode _).
       map(color => color._2 * 0.229 + color._3 * 0.587 + color._4 * 0.114)
   }

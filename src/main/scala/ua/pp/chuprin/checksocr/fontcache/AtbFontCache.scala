@@ -21,7 +21,7 @@ object AtbFontCache extends App {
       val line = lines(i)
       for(j <- 0 until content(i).length) {
 
-        val cropped = Recognizer.crop(line.getSubimage(j * AtbRecognizer.characterWidth, 0, AtbRecognizer.characterWidth, line.getHeight))
+        val cropped = Recognizer.crop(line.getSubimage(j * AtbRecognizer.CHARACTER_WIDTH, 0, AtbRecognizer.CHARACTER_WIDTH, line.getHeight))
         ImageIO.write(cropped, "png", new File("generated/chars/" + i + "_" + j + ".png"))
 
         recognitionTable(content(i).charAt(j)) = Recognizer.gray(cropped)
